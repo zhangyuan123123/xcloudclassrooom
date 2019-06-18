@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="../js/jquery-1.9.1.min.js"></script>
+<link rel="stylesheet" href="../js/layui/css/layui.css" />
+<link rel="stylesheet" href="../js/layui/css/modules/laydate/default/laydate.css">
+<link rel="stylesheet" href="../js/layui/css/layui.css"  media="all">
+<script type="text/javascript" src="../js/layui/layui.js"></script>
+<script src="../js/layui/layui.all.js" charset="UTF-8"></script>
+<body>
+<table class="layui-hide" id="test" lay-filter="tblist"></table>
+
+</body>
+<script>
+    $(function (){
+        index();
+    });
+    function index(){
+        layui.use(['table'], function(){
+            var table = layui.table;
+            table.render({
+                elem: '#test'
+                ,url:'../client/findmendianmap'
+                ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                ,limits : [3,5,7,9]
+                ,limit : 3
+                ,page:true
+                ,cols: [
+                    [
+                        {field:'id',  title: 'ID', sort: true}
+                        ,{field:'menDianName',  title: '门店'}
+                        ,{field:'name',  title: '所在城市'}
+                        ,{field:'address',  title: '详细地址'}
+                        ,{field:'phone', title: '门店电话'}
+                        ,{field:'workDate', title: '工作时间'}
+                        ,{fixed: 'right',title:'操作', width:178, align:'center', toolbar: '#barDemo'}
+                    ]
+                ]
+            });
+            //通过添加监听
+            table.on('tool(tblist)', function(obj) {
+                data = obj.data;
+                //然后data.你的值就可以了
+                //alert(data.id);
+            })
+        });
+    }
+    var data;
+
+</script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="detail" href="javascript:deleteMenDianById(data.id)">删除门店</a>
+</script>
+<script>
+    //删除门店
+    function deleteMenDianById(id){
+        $.ajax({
+            url:"/client/deleteMenDianById",
+            data:{id:id},
+            type:"post",
+            success:function(data){
+                if(data==1){
+                    layer.msg('成功');
+                }
+            },error:function(){
+                layer.msg('失败');
+            }
+        })
+    }
+
+
+</script>
+
+
+
+<!--<script>
+    function findMenDianById(id){
+        alert("111");
+        //示范一个公告层
+        layer.open({
+            type: 1
+            ,
+            title: false //不显示标题栏
+            ,
+            closeBtn: false
+            ,
+            area: '400px;'
+            ,
+            shade: 0.8
+            ,
+            id: 'LAY_layuipro' //设定一个id，防止重复弹出
+            ,
+            btn: ['修改', '关闭']
+            ,
+            btnAlign: 'c'
+            ,
+            moveType: 1 //拖拽模式，0或者1
+            ,
+            content: getJspHtml("../client/findMenDianById?id="+id)
+            ,
+            success: function (layero) {
+                var btn = layero.find('.layui-layer-btn');
+                btn.find('.layui-layer-btn0').attr({
+                    href: 'javascript:toxiugai('+id+')'
+                    , target: '_blank'
+                });
+            }
+        });
+
+    }
+
+    //  发送ajax请求获取jsp页面内容
+    function getJspHtml(url){
+        var  jspHtml = "";
+        $.ajax({
+            url :url,// 弹框里是：  /test/project/addPage.do
+            type : "post",
+            async:false,//需要注意的   应是同步请求
+            success : function (data){
+                //返回的data为     bootstarpDialog.jsp  的页面内容
+                jspHtml = data;
+            },error : function (){
+                alert("ajax失败");
+            }
+        })
+        //将data返回的jsp内容  填充到dialog方法的   message  属性中
+        return jspHtml;
+    }
+
+
+
+</script>-->
+
+</html>

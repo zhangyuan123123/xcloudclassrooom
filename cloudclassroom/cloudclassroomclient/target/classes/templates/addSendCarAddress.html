@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form id="addForm">
+<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">送车点:</label>
+        <div class="layui-input-block">
+            <input type="text" name="sendCarName" id="sendCarNameId">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">具体地址</label>
+        <div class="layui-input-block">
+            <input type="text" name="sendCarAddress" id="sendCarAddressId"  placeholder="请输入具体地址">
+        </div>
+    </div>
+
+    <div class="layui-input-inline">
+        <label class="layui-form-label">所在城市</label>
+        <select  id="selectCityId" onchange="findShiAll()"></select>
+        <select name="cityId" id="selectShiId"></select>
+    </div>
+
+    <div class="layui-input-inline">
+        <label class="layui-form-label">所在门店</label>
+        <select name="mendianId" id="selectCarMenDianId"></select>
+    </div>
+
+
+
+
+</div>
+</form>
+</body>
+<script>
+    $(function(){
+        findmendian();
+        findCityAll();
+    });
+    //门店回显
+    function findmendian(){
+        $.ajax({
+            url : "../client/findmendian",
+            type : "post",
+            dataType : "json",
+            success : function (data){
+                console.log(data);
+                var str = "<option value='0'>请选择</option>";
+                for(var i=0; i<data.length;i++){
+                    str += "<option value='"+data[i].id+"'>"+data[i].menDianName+"</option>";
+
+                }
+                $("#selectCarMenDianId").html(str);
+            },error : function (){
+                alert("门店失败");
+            }
+        });
+    }
+    //省回显
+    function findCityAll(){
+        $.ajax({
+            url : "../client/findCityAll",
+            type : "post",
+            dataType : "json",
+            success : function (data){
+                var str = "<option value='0'>请选择</option>";
+                for(var i=0; i<data.length;i++){
+                    str += "<option value='"+data[i].id+"'>"+data[i].name+"</option>";
+                }
+                $("#selectCityId").html(str);
+                $("#selectShiId").html("<option value='0'>--请选择--</option>");
+            },error : function (){
+                alert("门店失败");
+            }
+        });
+    }
+    //获取市的数据  findShiAll
+    function findShiAll() {
+        var selectCityId = $("#selectCityId").val();
+        $.ajax({
+            url : "../client/findShiAll",
+            type : "post",
+            data : {selectCityId:selectCityId},
+            dataType : "json",
+            success : function (data){
+                var str = " <option value='0'>--请选择--</option> ";
+                for(var i=0;i<data.length;i++){
+                    str += " <option value='"+data[i].id+"'>--"+data[i].name+"--</option> ";
+                }
+                $("#selectShiId").html(str);
+            },error : function (){
+                alert("市回显失败");
+            }
+        });
+    }
+
+
+
+
+</script>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="/js/jquery-1.9.1.min.js"></script>
+<link rel="stylesheet" href="/js/layui/css/layui.css"/>
+<link rel="stylesheet" href="/js/layui/css/modules/laydate/default/laydate.css"/>
+<link rel="stylesheet" href="/js/layui/css/layui.css"  media="all"/>
+<script type="text/javascript" src="/js/layui/layui.js"></script>
+<script src="/js/layui/layui.all.js" charset="UTF-8"></script>
+<script src="/js/layui/lay/modules/tree.js"></script>
+<body>
+<style>
+    .picurl{  /*最后的pic为字段的field*/
+        height: 100%;
+        max-width: 100%;
+    }
+</style>
+<center><font color="black" size="7px">到期用户</font></center>
+<table class="layui-hide" id="demo" lay-filter="test"></table>
+</body>
+<script type="text/javascript">
+    $(function(){
+        tables();
+    })
+    function tables() {
+        //执行一个 table 实例
+        var table = layui.table;
+        layui.use('table', function () {
+
+            table.render({
+                elem: '#demo'
+                , height: 420
+                , url: '/exuserrefer' //数据接口
+                , page: true //开启分页
+                , limit: 2
+                , limits: [1, 2, 5, 10]
+                , toolbar: 'default' //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+                , cols: [
+                    [ //表头
+                        {field: 'userId', title: 'ID', width: 80, sort: true}
+                        ,{field: 'name', title: '过期用户', width: 80}
+                        ,{field: 'carXingName', title: '过期车辆', width: 80}
+                        ,{field: 'number', title: '车牌号', width: 80}
+                        ,{field: 'carlogo', title: '过期车辆图片',
+                        templet: function (d) {
+                            return '<img  class="picurl" src="' + d.carlogo + '"/>'
+                        }, width: 80}
+                        , {field: 'startTime', title: '开始时间', width: 110}
+                        , {field: 'endTime', title: '结束时间', width: 110}
+                        , {field: 'guoqiTime', title: '过期时长'
+                        ,templet:function(d){
+                            var tian=null;
+                            var shi=null;
+                            if(d.guoqiTime>=24){
+                                tian=d.guoqiTime/24;
+                                tian= Math.floor(tian)
+                                shi=d.guoqiTime%24
+                                return tian+"天"+shi+"小时";
+
+                            }else{
+                                return d.guoqiTime+"小时";
+                            }
+
+                        }, width: 110}
+                    ]
+                ]
+            });
+        })
+    }
+
+</script>
+</html>

@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    name: mydb
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://192.168.1.113:3306/classroom?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+
+  application:
+    name: servernamezyc
+mybatis:
+  mapperLocations: classpath*:mybatis/mapper-*.xml
+  typeAliasesPackage: com.jk.model
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://192.168.1.113:1001/eureka/
+
+
+server:
+  port: 8082

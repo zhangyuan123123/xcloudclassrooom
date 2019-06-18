@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jk.mapper.ServerMapper">
+    <select id="findCarGuanli" resultType="com.jk.model.CarModel">
+        select * from t_carguanli c left JOIN t_mendian m on  c.carMenDianId=m.id left join t_carxingname x on c.carXing = x.id limit #{page},#{limit}
+    </select>
+    <select id="findmendian" resultType="com.jk.model.CarModel">
+        select * from t_mendian
+    </select>
+    <select id="findmendianmap" resultType="com.jk.model.CarModel">
+        select * from t_mendian m inner join t_area a on m.cityId = a.id limit #{page},#{limit}
+    </select>
+    <select id="findSendCarAddress" resultType="com.jk.model.CarModel">
+        select * from t_sendCarAddress s INNER JOIN t_mendian m on s.mendianId = m.id INNER JOIN t_area a  on s.cityId = a.id
+    </select>
+    <insert id="addSendCar">
+        insert into t_sendCarAddress (sendCarName,sendCarAddress,cityId,mendianId)
+          values (#{c.sendCarName},#{c.sendCarAddress},#{c.cityId},#{c.mendianId})
+    </insert>
+    <select id="findReturnCarAddress" resultType="com.jk.model.CarModel">
+        select * from t_returnCarAddress s INNER JOIN t_mendian m on s.mendianId = m.id INNER JOIN t_area a  on s.cityId = a.id
+    </select>
+    <insert id="addReturnCar">
+        insert into t_returnCarAddress (returnCarName,returnCarAddress,cityId,mendianId)
+          values (#{c.returnCarName},#{c.returnCarAddress},#{c.cityId},#{c.mendianId})
+    </insert>
+    <select id="findReturnCar" resultType="java.util.LinkedHashMap">
+        select * from ordergoods o
+INNER JOIN user u ON o.goodUserId=u.userId
+inner join t_aptitude a on u.userInfoid=a.id
+INNER JOIN insurance i on o.insuranceId=i.insuranceId
+INNER JOIN t_carguanli c on o.carId=c.id
+INNER JOIN t_carxingname cn on c.carXing=cn.id
+where o.returnCarStatus = 0
+ORDER BY o.status desc,o.createTime
+limit #{page},#{limit}
+    </select>
+</mapper>

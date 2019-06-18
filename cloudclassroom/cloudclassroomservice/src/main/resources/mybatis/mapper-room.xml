@@ -1,0 +1,76 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.mapper.ClassRoomMapper">
+
+    <select id="refer" resultType="com.jk.model.CouponModel">
+        select * from coupon c inner join couponimg ci on c.imgId=ci.imgId
+        limit #{page},#{limit}
+    </select>
+
+    <select id="count" resultType="java.lang.Long">
+        select count(*) from coupon c inner join couponimg ci on c.imgId=ci.imgId
+    </select>
+
+    <delete id="deletecoupon">
+        delete from coupon where couponId=#{sid}
+    </delete>
+    <insert id="adddiscountcoupon">
+        insert into coupon(couponTitle,imgId,couponTimeliness,couponQuantity,couponStarttime,couponEndtime,couponStatus,couponType,coupon,couponPrice)
+        values (#{couponTitle},#{imgId},#{couponTimeliness},#{couponQuantity},#{couponStarttime},#{couponEndtime},#{couponStatus},#{couponType},#{coupon},#{couponPrice})
+    </insert>
+    <insert id="addcouponimg">
+        insert into couponimg(imgUrl) values(#{imgUrl})
+    </insert>
+    <select id="findimgId" resultType="integer">
+        select imgId from couponimg where imgUrl=#{imgUrl}
+    </select>
+    <select id="finddiscountcouponById" resultType="com.jk.model.CouponModel">
+        select * from coupon c,couponimg cimg where c.imgId=cimg.imgId and c.couponId=#{id}
+    </select>
+    <update id="updatecouponimg">
+        update couponimg set imgUrl=#{imgUrl} where imgId=#{imgId}
+    </update>
+    <update id="updatediscountcoupon">
+        update coupon set couponTitle=#{couponTitle},couponTimeliness=#{couponTimeliness},couponQuantity=#{couponQuantity},couponStarttime=#{couponStarttime},couponEndtime=#{couponEndtime},couponStatus=#{couponStatus},couponType=#{couponType},couponPrice=#{couponPrice}
+        where couponId=#{couponId}
+    </update>
+    <select id="exuserrefer" resultType="java.util.LinkedHashMap">
+        SELECT
+        u.userId userId,a.`name` name,x.carXingName carXingName,c.carNumber number,
+        c.carlogo carlogo,g.createTime startTime,g.endTime endTime
+        FROM
+        USER u,
+        t_aptitude a,
+        t_carguanli c,
+        ordergoods g,
+        t_carxingname x
+        WHERE
+        u.userId = a.userid
+        AND u.userId = g.goodUserId
+        AND g.carId = c.id
+        AND c.carXing = x.id
+        and g.endTime &lt;=SYSDATE()
+        and g.`status`=1
+        and g.zhuangtai=1
+        limit #{page},#{limit}
+    </select>
+    <select id="getexuserrefercount" resultType="java.lang.Long">
+        SELECT
+        count(*)
+        FROM
+        USER u,
+        t_aptitude a,
+        t_carguanli c,
+        ordergoods g,
+        t_carxingname x
+        WHERE
+        u.userId = a.userid
+        AND u.userId = g.goodUserId
+        AND g.carId = c.id
+        AND c.carXing = x.id
+        and g.endTime &lt;=SYSDATE()
+        and g.`status`=1
+        and g.zhuangtai=1
+    </select>
+</mapper>

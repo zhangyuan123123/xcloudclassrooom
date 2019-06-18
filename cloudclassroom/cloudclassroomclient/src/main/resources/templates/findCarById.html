@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">
+    车辆状态：<b id="typeId"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <input type="hidden" id="typeHidId" th:value="${car.carType}">
+    车辆编号：<b th:text="${car.id}"></b><br/>
+    车牌号：<b th:text="${car.carNumber}"></b><br/>
+    汽车名称：<b th:text="${car.carXiangTi}"></b><br/>
+    车排量：<b th:text="${car.carpailiang}"></b><br/>
+    挡类型：<b th:text="${car.carDangType}"></b><br/>
+    <br/>
+    <input type="hidden" id="carlogoHidId" th:value="${car.carlogo}">
+    汽车图片：<img  id="imgId"  width="100px" height="70px"/><br/>
+    座位数：<b th:text="${car.carZuoWei}"></b><br/>
+    所在门店：<b th:text="${car.menDianName}"></b><br/>
+    租赁价格：<b th:text="${car.carPrice}"></b><b>元</b><br/>
+
+
+</div>
+
+</body>
+<script type="text/javascript">
+    $(function(){
+       var type=$("#typeHidId").val();
+       if(type==1){
+           $("#typeId").text("待租")
+       }else if(type==2){
+           $("#typeId").text("停用中")
+       }else if(type==3){
+           $("#typeId").text("待发车")
+       }else if(type==4){
+           $("#typeId").text("待收车")
+       }
+        var logo=$("#carlogoHidId").val();
+        $("#imgId").prop("src",logo);
+    })
+</script>
+</html>

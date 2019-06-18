@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="../js/jquery-1.9.1.min.js"></script>
+<link rel="stylesheet" href="../js/layui/css/layui.css" />
+<link rel="stylesheet" href="../js/layui/css/modules/laydate/default/laydate.css">
+<link rel="stylesheet" href="../js/layui/css/layui.css"  media="all">
+<script type="text/javascript" src="../js/layui/layui.js"></script>
+<script src="../js/layui/layui.all.js" charset="UTF-8"></script>
+<body>
+
+<table class="layui-hide" id="test" lay-filter="tblist"></table>
+
+</body>
+<script>
+    $(function (){
+        index();
+    });
+    function index(){
+        layui.use(['table'], function(){
+            var table = layui.table;
+            table.render({
+                elem: '#test'
+                ,url:'../client/findReturnCar'
+                ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                ,limits : [3,5,7,9]
+                ,limit : 3
+                ,page:true
+                ,cols: [
+                    [
+                        {field: 'goodId', title: 'ID', width: 40,type:'numbers'}
+                        , {field: 'goodNumber', title: '订单号', width: 110}
+                        , {field: 'goodUserId', title: '用户', width: 200}
+                        , {field: 'insuranceName', title: '保险', width: 80}
+                        , {field: 'goodPrice', title: '付款金额', width: 110}
+                        , {field: 'createTime', title: '租车时间', width: 200}
+                        , {field: 'endTime', title: '还车时间', width: 110}
+                        , {field: 'dateNumber', title: '租车天数', width: 110}
+                        , {field: 'carSome', title: '租车地点', width: 200}
+                        , {field: 'carPoint', title: '还车地点', width: 110}
+                        , {field: 'carXingName', title: '车型', width: 200}
+                        , {field: 'zhuangtai', title: '车辆状态',templet:function(d){
+                            if(d.zhuangtai==1){
+                                return "租用中";
+                            }else if(d.zhuangtai==2){
+                                return "已还车";
+                            }
+                        }, width: 110}
+                        ,
+                        ,{fixed: 'right',title:'操作', width:178, align:'center', toolbar: '#barDemo'}
+                    ]
+                ]
+            });
+            //通过添加监听
+            table.on('tool(tblist)', function(obj) {
+                data = obj.data;
+                //然后data.你的值就可以了
+                //alert(data.id);
+            })
+        });
+    }
+    var data;
+
+</script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-sm layui-btn-normal" id="classId" lay-event="detail" href="javascript:updateReturnCarShenHe(data.goodId)">审核通过</a>
+</script>
+<script>
+    function updateReturnCarShenHe(goodId) {
+        alert(goodId);
+        $.ajax({
+            url:'../client/updateReturnCarShenHe',
+            type:'post',
+            data:{goodId:goodId},
+            success:function(data){
+                if(data==1){
+                    $("#classId").prop("class","layui-btn layui-btn-disabled");
+                    layer.msg('已还车');
+                }
+                location.reload();
+            }, error:function(){
+                layer.msg('还车失败');
+            }
+        })
+    }
+</script>
+</html>
