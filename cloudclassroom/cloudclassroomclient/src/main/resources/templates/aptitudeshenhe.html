@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .picurl{  /*最后的pic为字段的field*/
+        height: 100%;
+        max-width: 100%;
+    }
+</style>
+<script src="/js/jquery-1.8.0.js"></script>
+<link rel="stylesheet" href="/layui/css/layui.css" />
+<link rel="stylesheet" href="/layui/css/modules/laydate/default/laydate.css">
+<script src="/layui/layui.all.js" charset="UTF-8"></script>
+<script src="/layui/layui.js" charset="UTF-8"></script>
+<body>
+<div class="layui-form-item">
+    <label class="layui-form-label">认证人名称</label>
+    <div class="layui-input-inline">
+        <input type="text" id="nameId" lay-verify="required" placeholder="请输入认证人名称" autocomplete="off" class="layui-input">
+    </div>
+</div>
+<button type="button" onclick="find()" class="layui-btn layui-btn-danger">筛选</button>
+<table class="layui-hide" id="entermsgTable"  lay-filter="tblist"></table>
+</body>
+<script type="text/javascript">
+    $(function(){
+        find();
+    });
+    function find(){
+        layui.use('table', function() {
+            var table = layui.table;
+            //第一个实例
+            table.render({
+                elem: '#entermsgTable'
+                , height: 312
+                , url: '../hhx/findaptitude' //数据接口
+                , page: true //开启分页
+                ,where:{name:$("#nameId").val()}
+                , limit: 4
+                ,toolbar: 'default'
+                , limits: [4, 6, 8]
+                , cols: [
+                    [ //表头
+                        {field: 'zizheng', title: '序列', width: 40,type:'numbers'}
+                        , {field: 'name', title: '认证人姓名', width: 110}
+                        , {field: 'sfz', title: '身份证号码', width: 200}
+                        , {field: 'driving', title: '驾驶证',templet:function(d){
+                            return '<img class="picurl" src="'+d.driving+'">'
+                        }, width: 80}
+                        , {field: 'xxx', title: '操作',templet:function(d){
+                            var str='<a id="tongguoId" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="detail" href="javascript:tongguo('+d.id+',&quot;'+d.name+'&quot;,&quot;'+d.sfz+'&quot;)">通过</a>';
+                            str+='<a  class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del" href="javascript:liyou('+d.id+')">拒绝</a>'
+                            return str;
+                        },width: 160}
+                    ]
+                ],
+            })
+
+        })
+    }
+
+
+    function tongguo(id,name,sfz){
+        $.ajax({
+            url:"../hhx/tongguo",
+            type:"post",
+            data:{id:id,name:name,sfz:sfz},
+            success:function(data){
+                console.log(data);
+                var content = data.policeCheckInfo[0].veritem[2].content;
+
+                if(content==3){
+                    $.ajax({
+                        url:"/hhx/shenhetongguo",
+                        type:"post",
+                        data:{id:id},
+                        success:function(data){
+                            layer.msg('审核通过');
+                        },error:function(){
+                            layer.msg('审核失败');
+                        }
+                    });
+                    //审核通过
+                    $("#tongguoId").prop("class","layui-btn layui-btn-disabled")
+                }
+                if(content==2){
+                    alert("");
+                    layer.msg('姓名及身份证号不一致');
+                }
+                if(content==1){
+                    layer.msg('库无');
+                }
+                if(content==07){
+                    layer.msg('条件不符合要求');
+                }
+
+            },error:function(){
+                    layer.msg('审核失败');
+            }
+        });
+    }
+    function shenhejujue(id){
+        var liyou=$("#liyouId").val();
+        $.ajax({
+            url:"/hhx/shenhejujue",
+            type:"post",
+            data:{id:id,liyou:liyou},
+            success:function(){
+                layer.msg('拒绝成功');
+                location.reload();
+            },error:function(){
+                layer.msg('拒绝失败');
+            }
+        });
+    }
+    function liyou(id){
+        //在这里面输入任何合法的js语句
+        layer.open({
+            type: 1 //Page层类型
+            ,area: ['250px', '200px']
+            ,title: '拒绝理由'
+            ,shade: 0.6 //遮罩透明度
+            ,maxmin: true //允许全屏最小化
+            ,anim: 1 //0-6的动画形式，-1不开启
+            ,content:'<center><h2><b>理由</b></h2><br/><input type="text" style="width: 200px " class="layui-input" id="liyouId" name="liyou"><br/>' +
+                '<a  class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del" href="javascript:shenhejujue('+id+')">提交</a></center>'
+        });
+    }
+</script>
+</html>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.mapper.ClassRoomMapper">
+<select id="findaptitude" resultType="java.util.LinkedHashMap">
+    select * from t_aptitude where status=1   limit ${page},${limit}
+</select>
+    <select id="findaptitudeName" resultType="java.util.LinkedHashMap">
+        select * from t_aptitude where status=1 and name=#{name} limit ${page},${limit}
+    </select>
+
+
+<select id="getAptitudeSumSize" resultType="java.lang.Long">
+    select count(*) from t_aptitude where status=1
+</select>
+<update id="shenhejujue">
+    update t_aptitude set status=3,jujueliyou=#{liyou} where id=#{id}
+</update>
+<update id="shenhetongguo">
+    update t_aptitude set status=2 where id=#{id}
+</update>
+<select id="findzucheliang" resultType="java.util.LinkedHashMap">
+    SELECT
+	g.goodUserId userId,a.`name` name,count(g.goodUserId) count
+FROM
+	ordergoods g,
+	t_aptitude a,
+	user u
+where g.goodUserId = u.userId
+AND a.userid = u.userId
+GROUP BY g.goodUserId
+limit ${page},${limit}
+</select>
+<select id="getzucheliangSumSize" resultType="java.lang.Long">
+SELECT count(h.userId) from
+(SELECT
+	g.goodUserId userId,a.`name`,count(g.goodUserId) count
+FROM
+	ordergoods g,
+	t_aptitude a,
+	user u
+where g.goodUserId = u.userId
+AND a.userid = u.userId
+GROUP BY g.goodUserId) h
+</select>
+<select id="findzuchexinxi" resultType="java.util.LinkedHashMap">
+        SELECT
+	a.`name` name,x.carXingName xinghao,c.carNumber number,c.carlogo logo,c.carPrice price,m.menDianName mendian,g.createTime startTime,g.endTime endTime
+FROM
+	ordergoods g,
+	t_aptitude a,
+	user u,
+	t_carguanli c,
+    t_mendian m,
+    t_carxingname x
+where g.goodUserId = u.userId
+AND a.userid = u.userId
+and c.id=g.carId
+and m.id=c.carMenDianId
+and c.carXing=x.id
+and u.userId=#{id}
+limit ${page},${limit}
+</select>
+<select id="getzuchexinxi" resultType="java.lang.Long">
+        SELECT
+	count(g.goodId)
+FROM
+	ordergoods g,
+	t_aptitude a,
+	user u,
+	t_carguanli c,
+    t_mendian m,
+    t_carxingname x
+where g.goodUserId = u.userId
+AND a.userid = u.userId
+and c.id=g.carId
+and m.id=c.carMenDianId
+and c.carXing=x.id
+and u.userId=#{id}
+</select>
+
+	<select id="ordercount" resultType="java.lang.Long">
+		select count(*) from ordergoods
+	</select>
+
+	<select id="orderrefer" resultType="java.util.LinkedHashMap">
+		select * from ordergoods o
+INNER JOIN user u ON o.goodUserId=u.userId
+inner join t_aptitude a on u.userInfoid=a.id
+INNER JOIN insurance i on o.insuranceId=i.insuranceId
+INNER JOIN t_carguanli c on o.carId=c.id
+INNER JOIN t_carxingname cn on c.carXing=cn.id
+ORDER BY o.`status` desc,o.createTime
+limit #{page},#{limit}
+	</select>
+
+	<update id="updateStatus">
+		update ordergoods set status=1,zhuangtai=1 where goodId=#{xid}
+	</update>
+
+	<select id="refer" resultType="java.util.HashMap">
+		select * from ordergoods where goodId=#{xid}
+	</select>
+
+	<select id="userrefer" resultType="java.util.HashMap">
+		select u.userPhone from ordergoods o
+INNER JOIN user u ON o.goodUserId=u.userId
+where o.goodId=#{xid}
+	</select>
+</mapper>

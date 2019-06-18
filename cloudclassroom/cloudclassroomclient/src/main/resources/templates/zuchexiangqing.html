@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .picurl{  /*最后的pic为字段的field*/
+        height: 100%;
+        max-width: 100%;
+    }
+</style>
+<body>
+<input type="hidden" th:value="${id}" id="idHid">
+<table class="layui-hide" id="zuchexinxiTable"  lay-filter="tblist"></table>
+</body>
+<script type="text/javascript">
+    layui.use('table', function() {
+        var id=$("#idHid").val();
+        var table = layui.table;
+        //第一个实例
+        table.render({
+            elem: '#zuchexinxiTable'
+            , height: 312
+            , url: '../hhx/findzuchexinxi?id='+id //数据接口
+            , page: true //开启分页
+            , limit: 4
+            , limits: [4, 6, 8]
+            , cols: [
+                [ //表头
+                    {field: 'zizheng', title: '序列', width: 40, type: 'numbers'}
+                    , {field: 'name', title: '租车人', width: 80}
+                    , {field: 'xinghao', title: '车类型', width: 120}
+                    , {field: 'number', title: '车牌号', width: 120}
+                    , {field: 'logo', title: '车图片',templet:function(d){
+                        return '<img class="picurl" src="'+d.logo+'">'
+                    }, width: 120}
+                    , {field: 'price', title: '租车金额', width: 120}
+                    , {field: 'mendian', title: '车门店', width: 120}
+                    , {field: 'startTime', title: '开始时间', width: 120}
+                    , {field: 'endTime', title: '结束时间', width: 120}
+                ]
+            ],
+        })
+    })
+</script>
+</html>
